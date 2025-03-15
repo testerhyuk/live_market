@@ -17,7 +17,7 @@ public class ArticleResponse {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    // ArticleResponse 타입 -> Article 타입으로
+    // Article 타입 -> ArticleResponse 타입으로 변환
     public static ArticleResponse from(Article article) {
         ArticleResponse response = new ArticleResponse();
 
