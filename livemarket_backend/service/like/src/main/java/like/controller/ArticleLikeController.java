@@ -33,4 +33,9 @@ public class ArticleLikeController {
     ) {
         articleLikeService.unlike(articleId, userId);
     }
+
+    @GetMapping("/v1/article-likes/articles/{articleId}/count")
+    public Long count(@PathVariable("articleId") Long articleId) {
+        return articleLikeService.count(articleId);
+    }
 }
