@@ -54,4 +54,9 @@ public class ArticleController {
     ) {
         return articleService.readAllInfiniteScroll(boardId, pageSize, lastArticleId);
     }
+
+    @GetMapping("/v1/articles/boards/{boardId}/count")
+    public Long count(@PathVariable("boardId") Long boardId) {
+        return articleService.count(boardId);
+    }
 }

@@ -10,6 +10,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Log4j2
 public class ArticleApiTest {
@@ -109,6 +114,60 @@ public class ArticleApiTest {
         for (ArticleResponse articleResponse : articles2) {
             log.info("articleResponse.getArticleId() = " + articleResponse.getArticleId());
         }
+    }
+
+    @Test
+    void countTest() {
+        ArticleResponse response = create(new ArticleCreateRequest("hi", "content", 1L, 8L));
+
+        Long count1 = restClient.get()
+                .uri("/v1/articles/boards/{boardId}/count", 8L)
+                .retrieve()
+                .body(Long.class);
+
+        log.info("count1 = " + count1);
+
+        restClient.delete()
+                .uri("/v1/articles/{articleId}", response.getArticleId())
+                .retrieve()
+                .body(ArticleResponse.class);
+
+        Long count2 = restClient.get()
+                .uri("/v1/articles/boards/{boardId}/count", 8L)
+                .retrieve()
+                .body(Long.class);
+
+        log.info("count2 = " + count2);
+    }
+
+    @Test
+    void ConcurrencyCountTest() throws InterruptedException {
+        Long boardId = 8L;
+        int threadCount = 10;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            final Long writerId = (long) (300 + i);
+            executorService.execute(() -> {
+                try {
+                    create(new ArticleCreateRequest("동시성 테스트", "내용", writerId, boardId));
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        // 결과 검증
+        Long articleCount = restClient.get()
+                .uri("/v1/articles/boards/{boardId}/count", boardId)
+                .retrieve()
+                .body(Long.class);
+
+        log.info("최종 articleCount = " + articleCount);
+        assertThat(articleCount).isEqualTo(threadCount);
     }
 
     @Getter
