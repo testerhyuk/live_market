@@ -1,5 +1,6 @@
 package like.api;
 
+import comment.service.request.CommentCreateRequest;
 import comment.service.response.CommentPageResponse;
 import comment.service.response.CommentResponse;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommentApiTest {
     RestClient restClient = RestClient.create("http://localhost:9001");
@@ -99,6 +105,30 @@ public class CommentApiTest {
             }
             System.out.println("comment.getCommentId() = " + comment.getCommentId());
         }
+    }
+
+    @Test
+    void countTest() {
+        CommentResponse commentResponse = createComment(new CommentCreateRequest(6L, "my comment1", null, 1L));
+
+        Long count1 = restClient.get()
+                .uri("/v1/comments/articles/{articleId}/count", 6L)
+                .retrieve()
+                .body(Long.class);
+
+        System.out.println("count1 = " + count1);
+
+        restClient.delete()
+                .uri("/v1/comments/{commentId}", commentResponse.getCommentId())
+                .retrieve()
+                .body(CommentResponse.class);
+
+        Long count2 = restClient.get()
+                .uri("/v1/comments/articles/{articleId}/count", 6L)
+                .retrieve()
+                .body(Long.class);
+
+        System.out.println("count2 = " + count2);
     }
 
     @Getter

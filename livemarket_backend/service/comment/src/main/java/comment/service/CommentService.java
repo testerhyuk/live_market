@@ -1,6 +1,8 @@
 package comment.service;
 
+import comment.entity.ArticleCommentCount;
 import comment.entity.Comment;
+import comment.repository.ArticleCommentCountRepository;
 import comment.repository.CommentRepository;
 import comment.service.request.CommentCreateRequest;
 import comment.service.response.CommentPageResponse;
@@ -19,6 +21,7 @@ import static java.util.function.Predicate.not;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final Snowflake snowflake = new Snowflake();
+    private final ArticleCommentCountRepository articleCommentCountRepository;
 
     @Transactional
     public CommentResponse create(CommentCreateRequest request) {
@@ -33,6 +36,13 @@ public class CommentService {
                         request.getWriterId()
                 )
         );
+
+        int result = articleCommentCountRepository.increase(request.getArticleId());
+        if (result == 0) {
+            articleCommentCountRepository.save(
+                    ArticleCommentCount.init(request.getArticleId(), 1L)
+            );
+        }
 
         return CommentResponse.from(comment);
     }
@@ -74,6 +84,8 @@ public class CommentService {
     private void delete(Comment comment) {
         commentRepository.delete(comment);
 
+        articleCommentCountRepository.decrease(comment.getArticleId());
+
         if(!comment.isRoot()) {
             commentRepository.findById(comment.getParentCommentId())
                     .filter(Comment::getDeleted)
@@ -99,5 +111,11 @@ public class CommentService {
         return comments.stream()
                 .map(CommentResponse::from)
                 .toList();
+    }
+
+    public Long count(Long boardId) {
+        return articleCommentCountRepository.findById(boardId)
+                .map(ArticleCommentCount::getCommentCount)
+                .orElse(0L);
     }
 }
