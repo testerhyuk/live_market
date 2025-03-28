@@ -1,11 +1,12 @@
 package article.controller;
 
 import article.service.ArticleService;
+import article.service.S3Service;
 import article.service.request.ArticleCreateRequest;
 import article.service.request.ArticleUpdateRequest;
 import article.service.response.ArticlePageResponse;
 import article.service.response.ArticleResponse;
-import livemarket.backend.common.snowflake.Snowflake;
+import article.service.response.PreSignedUrlListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class ArticleController {
-    private final Snowflake snowflake = new Snowflake();
     private final ArticleService articleService;
+    private final S3Service s3Service;
 
     @GetMapping("/v1/articles/{articleId}")
     public ArticleResponse read(@PathVariable("articleId") Long articleId) {
@@ -58,5 +59,10 @@ public class ArticleController {
     @GetMapping("/v1/articles/boards/{boardId}/count")
     public Long count(@PathVariable("boardId") Long boardId) {
         return articleService.count(boardId);
+    }
+
+    @PostMapping("/presigned-urls")
+    public PreSignedUrlListResponse getPreSignedUrls(@RequestBody List<String> fileNames) {
+        return new PreSignedUrlListResponse(s3Service.createPreSignedUrls(fileNames));
     }
 }

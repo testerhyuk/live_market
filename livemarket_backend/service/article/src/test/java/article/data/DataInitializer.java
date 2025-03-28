@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,7 +53,8 @@ public class DataInitializer {
                         "title" + i,
                         "content",
                         1L,
-                        1L
+                        1L,
+                        List.of("imageUrl")
                 );
                 entityManager.persist(article);
             }
