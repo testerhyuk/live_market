@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,11 +22,15 @@ public class ArticleService {
     private final Snowflake snowflake = new Snowflake();
     private final ArticleRepository articleRepository;
     private final BoardArticleCountRepository boardArticleCountRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public ArticleResponse create(ArticleCreateRequest request) {
+        List<String> imageUrls = request.getImageUrls();
+
         Article article = articleRepository.save(
-                Article.create(snowflake.nextId(), request.getTitle(), request.getContent(), request.getBoardId(), request.getWriterId())
+                Article.create(snowflake.nextId(), request.getTitle(), request.getContent(),
+                        request.getBoardId(), request.getWriterId(), imageUrls)
         );
 
         BoardArticleCount boardArticleCount = boardArticleCountRepository.findLockedByBoardId(request.getBoardId())
@@ -41,7 +46,11 @@ public class ArticleService {
     public ArticleResponse update(Long articleId, ArticleUpdateRequest request) {
         Article article = articleRepository.findById(articleId).orElseThrow();
 
-        article.update(request.getTitle(), request.getContent());
+        List<String> updatedImages = new ArrayList<>(article.getImageUrls());
+        updatedImages.removeAll(request.getDeletedImageUrls());
+        updatedImages.addAll(request.getNewImageUrls());
+
+        article.update(request.getTitle(), request.getContent(), updatedImages);
 
         return ArticleResponse.from(article);
     }
@@ -49,6 +58,9 @@ public class ArticleService {
     @Transactional
     public void delete(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow();
+
+        article.getImageUrls().forEach(s3Service::deleteImage);
+
         articleRepository.delete(article);
 
         boardArticleCountRepository.findLockedByBoardId(article.getBoardId())
@@ -58,10 +70,16 @@ public class ArticleService {
                 });
     }
 
+    @Transactional(readOnly = true)
     public ArticleResponse read(Long articleId) {
-        return ArticleResponse.from(articleRepository.findById(articleId).orElseThrow());
+        Article article = articleRepository.findById(articleId).orElseThrow(
+                () -> new IllegalArgumentException("Article not found")
+        );
+
+        return ArticleResponse.from(article);
     }
 
+    @Transactional
     public ArticlePageResponse readAll(Long boardId, Long page, Long pageSize) {
         return ArticlePageResponse.of(
                 articleRepository.findAll(boardId, (page - 1) * pageSize, pageSize).stream()
@@ -73,6 +91,7 @@ public class ArticleService {
         );
     }
 
+    @Transactional
     public List<ArticleResponse> readAllInfiniteScroll(Long boardId, Long pageSize, Long lastArticleId) {
         List<Article> articles = lastArticleId == null ?
                 articleRepository.findAllInfiniteScroll(boardId, pageSize) :
@@ -81,8 +100,9 @@ public class ArticleService {
         return articles.stream().map(ArticleResponse::from).toList();
     }
 
+    @Transactional
     public Long count(Long boardId) {
-        return boardArticleCountRepository.findById(boardId)
+        return boardArticleCountRepository.findLockedByBoardId(boardId)
                 .map(BoardArticleCount::getArticleCount)
                 .orElse(0L);
     }

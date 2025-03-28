@@ -1,14 +1,26 @@
 package article.api;
 
+import article.service.request.ArticleCreateRequest;
 import article.service.response.ArticlePageResponse;
 import article.service.response.ArticleResponse;
+import article.service.response.PreSignedUrlListResponse;
+import article.service.response.PreSignedUrlResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -22,8 +34,11 @@ public class ArticleApiTest {
 
     @Test
     void createTest() {
+        List<String> fileNames = List.of("image1.jpg", "image2.jpg");
+        List<String> presignedUrls = getPresignedUrls(fileNames);
+
         ArticleResponse response = create(new ArticleCreateRequest(
-                "hi", "my content", 1L, 1L
+                "image Test3", "my Image content", 2L, 1L, presignedUrls
         ));
 
         log.info("response = " + response);
@@ -32,6 +47,7 @@ public class ArticleApiTest {
     ArticleResponse create(ArticleCreateRequest request) {
         return restClient.post()
                 .uri("/v1/articles")
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(request)
                 .retrieve()
                 .body(ArticleResponse.class);
@@ -39,7 +55,7 @@ public class ArticleApiTest {
 
     @Test
     void readTest() {
-        ArticleResponse response = read(157382179826307072L);
+        ArticleResponse response = read(163862518378237952L);
         log.info("response = " + response);
     }
 
@@ -52,15 +68,36 @@ public class ArticleApiTest {
 
     @Test
     void updateTest() {
-        update(157382179826307072L);
-        ArticleResponse response = read(157382179826307072L);
+        Long articleId = 163859091183566848L;
+        ArticleResponse response = read(articleId);
         log.info("response = " + response);
+
+        List<String> newImages = List.of("image3.jpg");
+        List<String> deletedImages = List.of("https://onairmarket.s3.ap-northeast-2.amazonaws.com/image1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250328T035731Z&X-Amz-SignedHeaders=host&X-Amz-Credential=AKIASU5664XZSW3TKAJ6%2F20250328%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Expires=180&X-Amz-Signature=7a58b9dc35060d11eaa67b437f8bbe434f0170cdd884bfda184c4a76bae17b33");
+
+        List<String> presignedUrls = getPresignedUrls(newImages);
+
+        List<String> updatedImages = new ArrayList<>(response.getImageUrls());
+        updatedImages.removeAll(deletedImages);
+        updatedImages.addAll(presignedUrls);
+
+        ArticleUpdateRequest updateRequest = new ArticleUpdateRequest(
+                "updated title",
+                "updated content",
+                presignedUrls,
+                deletedImages
+        );
+
+        update(articleId, updateRequest);
+
+        ArticleResponse articleResponse = read(articleId);
+        log.info("updated article : " + articleResponse);
     }
 
-    void update(Long articleId) {
+    void update(Long articleId, ArticleUpdateRequest updateRequest) {
         restClient.put()
                 .uri("/v1/articles/{articleId}", articleId)
-                .body(new ArticleUpdateRequest("hi2", "my content2"))
+                .body(updateRequest)
                 .retrieve()
                 .body(ArticleResponse.class);
     }
@@ -68,7 +105,7 @@ public class ArticleApiTest {
     @Test
     void deleteTest() {
         restClient.delete()
-                .uri("/v1/articles/{articleId}", 157382179826307072L)
+                .uri("/v1/articles/{articleId}", 163862518378237952L)
                 .retrieve()
                 .body(ArticleResponse.class);
     }
@@ -118,10 +155,10 @@ public class ArticleApiTest {
 
     @Test
     void countTest() {
-        ArticleResponse response = create(new ArticleCreateRequest("hi", "content", 1L, 8L));
+        ArticleResponse response = create(new ArticleCreateRequest("hi", "content", 3L, 12L, List.of("image1.jpg")));
 
         Long count1 = restClient.get()
-                .uri("/v1/articles/boards/{boardId}/count", 8L)
+                .uri("/v1/articles/boards/{boardId}/count", 12L)
                 .retrieve()
                 .body(Long.class);
 
@@ -133,7 +170,7 @@ public class ArticleApiTest {
                 .body(ArticleResponse.class);
 
         Long count2 = restClient.get()
-                .uri("/v1/articles/boards/{boardId}/count", 8L)
+                .uri("/v1/articles/boards/{boardId}/count", 12L)
                 .retrieve()
                 .body(Long.class);
 
@@ -142,7 +179,7 @@ public class ArticleApiTest {
 
     @Test
     void ConcurrencyCountTest() throws InterruptedException {
-        Long boardId = 8L;
+        Long boardId = 12L;
         int threadCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -151,7 +188,7 @@ public class ArticleApiTest {
             final Long writerId = (long) (300 + i);
             executorService.execute(() -> {
                 try {
-                    create(new ArticleCreateRequest("동시성 테스트", "내용", writerId, boardId));
+                    create(new ArticleCreateRequest("동시성 테스트", "내용", writerId, boardId, List.of("image1.jpg")));
                 } finally {
                     latch.countDown();
                 }
@@ -170,6 +207,23 @@ public class ArticleApiTest {
         assertThat(articleCount).isEqualTo(threadCount);
     }
 
+    List<String> getPresignedUrls(List<String> fileNames) {
+        PreSignedUrlListResponse response = restClient.post()
+                .uri("/presigned-urls")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(fileNames)
+                .retrieve()
+                .body(PreSignedUrlListResponse.class);
+
+        List<String> urls = response.getUrls().stream()
+                .map(PreSignedUrlResponse::getPreSignedUrl)
+                .toList();
+
+        log.info("Presigned URLs : " + urls);
+
+        return urls;
+    }
+
     @Getter
     @AllArgsConstructor
     static class ArticleCreateRequest {
@@ -177,6 +231,7 @@ public class ArticleApiTest {
         private String content;
         private Long writerId;
         private Long boardId;
+        private List<String> imageUrls;
     }
 
     @Getter
@@ -184,5 +239,7 @@ public class ArticleApiTest {
     static class ArticleUpdateRequest {
         private String title;
         private String content;
+        private List<String> newImageUrls;
+        private List<String> deletedImageUrls;
     }
 }
