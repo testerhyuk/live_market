@@ -1,4 +1,4 @@
-package like.data;
+package data;
 
 import comment.entity.Comment;
 import jakarta.persistence.EntityManager;

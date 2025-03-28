@@ -1,6 +1,5 @@
-package like.api;
+package comment.api;
 
-import comment.service.request.CommentCreateRequest;
 import comment.service.response.CommentPageResponse;
 import comment.service.response.CommentResponse;
 import lombok.AllArgsConstructor;
@@ -10,9 +9,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
