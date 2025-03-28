@@ -1,9 +1,9 @@
 package like.service;
 
 import like.entity.ArticleLike;
-import like.entity.ArticleLikeCount;
 import like.repository.ArticleLikeCountRepository;
 import like.repository.ArticleLikeRepository;
+import like.entity.ArticleLikeCount;
 import like.service.response.ArticleLikeResponse;
 import livemarket.backend.common.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;

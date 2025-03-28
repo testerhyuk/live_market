@@ -1,4 +1,4 @@
-package like.service;
+package service;
 
 import comment.entity.Comment;
 import comment.repository.CommentRepository;
