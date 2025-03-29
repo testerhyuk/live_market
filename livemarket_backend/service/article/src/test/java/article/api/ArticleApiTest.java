@@ -1,26 +1,18 @@
 package article.api;
 
-import article.service.request.ArticleCreateRequest;
-import article.service.response.ArticlePageResponse;
-import article.service.response.ArticleResponse;
-import article.service.response.PreSignedUrlListResponse;
-import article.service.response.PreSignedUrlResponse;
+import livemarket.article.service.response.ArticlePageResponse;
+import livemarket.article.service.response.ArticleResponse;
+import livemarket.article.service.response.PreSignedUrlListResponse;
+import livemarket.article.service.response.PreSignedUrlResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

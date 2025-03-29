@@ -1,6 +1,6 @@
 package like.api;
 
-import like.service.response.ArticleLikeResponse;
+import livemarket.like.service.response.ArticleLikeResponse;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
