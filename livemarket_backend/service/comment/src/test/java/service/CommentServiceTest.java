@@ -1,8 +1,8 @@
 package service;
 
-import comment.entity.Comment;
-import comment.repository.CommentRepository;
-import comment.service.CommentService;
+import livemarket.comment.entity.Comment;
+import livemarket.comment.repository.CommentRepository;
+import livemarket.comment.service.CommentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

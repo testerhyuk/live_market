@@ -1,9 +1,9 @@
 package article.data;
 
-import article.entity.Article;
+import livemarket.article.entity.Article;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import livemarket.backend.common.snowflake.Snowflake;
+import livemarket.common.snowflake.Snowflake;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

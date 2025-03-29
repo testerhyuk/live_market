@@ -1,7 +1,7 @@
 package comment.api;
 
-import comment.service.response.CommentPageResponse;
-import comment.service.response.CommentResponse;
+import livemarket.comment.service.response.CommentPageResponse;
+import livemarket.comment.service.response.CommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;

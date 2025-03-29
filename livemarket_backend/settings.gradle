@@ -10,3 +10,6 @@ include 'service:view'
 
 include 'common'
 include 'common:snowflake'
+include 'common:data-serializer'
+include 'common:event'
+include 'common:outbox-message-relay'
