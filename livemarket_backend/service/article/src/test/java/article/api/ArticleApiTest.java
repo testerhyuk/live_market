@@ -23,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Log4j2
 public class ArticleApiTest {
     RestClient restClient = RestClient.create("http://localhost:9000");
+    RestClient gatewayRestClient = RestClient.create("http://localhost:9007");
 
     @Test
     void createTest() {
@@ -214,6 +215,31 @@ public class ArticleApiTest {
         log.info("Presigned URLs : " + urls);
 
         return urls;
+    }
+
+    @Test
+    void loginAndCreateArticleTest() {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNjk2ODE1MzQwMjIyMDk1MzYiLCJpYXQiOjE3NDQ1MjM0NzksImV4cCI6MTc0NDUyNzA3OX0.oI2xHHk5_J8DMWzshH5n1FiQOfuQx0AZ3_zJblG8it0";
+        Long memberId = 169681534022209536L;
+
+        ArticleCreateRequest request = new ArticleCreateRequest(
+                "로그인 유저 게시글 작성 테스트",
+                "테스트",
+                memberId,
+                1L,
+                List.of("test.jpg")
+        );
+
+        ArticleResponse response = gatewayRestClient.post()
+                .uri("/v1/articles")
+                .header("Authorization", "Bearer " + token)
+                .header("X-User-Id", String.valueOf(memberId))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(ArticleResponse.class);
+
+        log.info("response = " + response);
     }
 
     @Getter

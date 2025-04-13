@@ -1,0 +1,27 @@
+server.port: 9007
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: member-service
+          uri: http://localhost:9006/
+          predicates:
+            - Path=/v1/members/**
+
+        - id: article-service
+          uri: http://localhost:9000/
+          predicates:
+            - Path=/v1/articles/**
+
+        - id: comment-service
+          uri: http://localhost:9001/
+          predicates:
+            - Path=/v1/comments/**
+
+        - id: like-service
+          uri: http://localhost:9002/
+          predicates:
+            - Path=/v1/article-likes/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

@@ -31,12 +31,14 @@ public class ArticleService {
     private final OutboxEventPublisher outboxEventPublisher;
 
     @Transactional
-    public ArticleResponse create(ArticleCreateRequest request) {
+    public ArticleResponse create(ArticleCreateRequest request, String memberId) {
+        Long writerId = Long.parseLong(memberId);
+
         List<String> imageUrls = request.getImageUrls();
 
         Article article = articleRepository.save(
                 Article.create(snowflake.nextId(), request.getTitle(), request.getContent(),
-                        request.getBoardId(), request.getWriterId(), imageUrls)
+                        request.getBoardId(), writerId, imageUrls)
         );
 
         BoardArticleCount boardArticleCount = boardArticleCountRepository.findLockedByBoardId(request.getBoardId())

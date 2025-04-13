@@ -29,7 +29,9 @@ public class ArticleLikeService {
     }
 
     @Transactional
-    public void like(Long articleId, Long userId) {
+    public void like(Long articleId, String memberId) {
+        Long userId = Long.parseLong(memberId);
+
         ArticleLike articleLike = articleLikeRepository.save(
                 ArticleLike.create(
                         snowflake.nextId(),
@@ -58,7 +60,9 @@ public class ArticleLikeService {
     }
 
     @Transactional
-    public void unlike(Long articleId, Long userId) {
+    public void unlike(Long articleId, String memberId) {
+        Long userId = Long.parseLong(memberId);
+
         articleLikeRepository.findByArticleIdAndUserId(articleId, userId)
                 .ifPresent(articleLike -> {
                     // 좋아요 기록 삭제

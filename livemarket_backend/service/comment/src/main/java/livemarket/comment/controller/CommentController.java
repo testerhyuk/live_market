@@ -22,8 +22,9 @@ public class CommentController {
     }
 
     @PostMapping("/v1/comments")
-    public CommentResponse create(@RequestBody CommentCreateRequest request) {
-        return commentService.create(request);
+    public CommentResponse create(@RequestBody CommentCreateRequest request,
+                                  @RequestHeader("X-User-Id") String memberId) {
+        return commentService.create(request, memberId);
     }
 
     @DeleteMapping("/v1/comments/{commentId}")

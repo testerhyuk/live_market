@@ -4,16 +4,20 @@ import livemarket.comment.service.response.CommentPageResponse;
 import livemarket.comment.service.response.CommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Log4j2
 public class CommentApiTest {
     RestClient restClient = RestClient.create("http://localhost:9001");
+    RestClient gatewayRestClient = RestClient.create("http://localhost:9007");
 
     @Test
     void create() {
@@ -125,6 +129,30 @@ public class CommentApiTest {
                 .body(Long.class);
 
         System.out.println("count2 = " + count2);
+    }
+
+    @Test
+    void loginAndCreateCommentTest() {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNjk2ODE1MzQwMjIyMDk1MzYiLCJpYXQiOjE3NDQ1MjM0NzksImV4cCI6MTc0NDUyNzA3OX0.oI2xHHk5_J8DMWzshH5n1FiQOfuQx0AZ3_zJblG8it0";
+        Long memberId = 169681534022209536L;
+
+        CommentCreateRequest request = new CommentCreateRequest(
+                169690477028016128L,
+                "로그인 유저 댓글 테스트",
+                null,
+                169681534022209536L
+        );
+
+        CommentResponse response = gatewayRestClient.post()
+                .uri("/v1/comments")
+                .header("Authorization", "Bearer " + token)
+                .header("X-User-Id", String.valueOf(memberId))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(CommentResponse.class);
+
+        log.info("response = " + response);
     }
 
     @Getter

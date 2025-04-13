@@ -29,7 +29,9 @@ public class CommentService {
     private final OutboxEventPublisher outboxEventPublisher;
 
     @Transactional
-    public CommentResponse create(CommentCreateRequest request) {
+    public CommentResponse create(CommentCreateRequest request, String memberId) {
+        Long writerId = Long.parseLong(memberId);
+
         Comment parent = findParent(request);
 
         Comment comment = commentRepository.save(
@@ -38,7 +40,7 @@ public class CommentService {
                         request.getContent(),
                         parent == null ? null : parent.getCommentId(),
                         request.getArticleId(),
-                        request.getWriterId()
+                        writerId
                 )
         );
 
