@@ -24,8 +24,9 @@ public class ArticleController {
     }
 
     @PostMapping("/v1/articles")
-    public ArticleResponse create(@RequestBody ArticleCreateRequest request) {
-        return articleService.create(request);
+    public ArticleResponse create(@RequestBody ArticleCreateRequest request,
+                                  @RequestHeader("X-User-Id") String memberId) {
+        return articleService.create(request, memberId);
     }
 
     @PutMapping("/v1/articles/{articleId}")

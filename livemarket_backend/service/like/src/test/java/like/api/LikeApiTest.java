@@ -3,15 +3,20 @@ package like.api;
 import livemarket.like.service.response.ArticleLikeResponse;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Log4j2
 public class LikeApiTest {
     RestClient restClient = RestClient.create("http://localhost:9002");
+    RestClient gatewayRestClient = RestClient.create("http://localhost:9007");
 
     @Test
     void likeAndUnlikeTest() {
@@ -92,5 +97,23 @@ public class LikeApiTest {
                 .body(Long.class);
 
         log.info("count = " + count);
+    }
+
+    @Test
+    void loginUserLikeTest() {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNjk2ODE1MzQwMjIyMDk1MzYiLCJpYXQiOjE3NDQ1MjM0NzksImV4cCI6MTc0NDUyNzA3OX0.oI2xHHk5_J8DMWzshH5n1FiQOfuQx0AZ3_zJblG8it0";
+        Long memberId = 169681534022209536L;
+        Long articleId = 169690477028016128L;
+
+        ResponseEntity<Void> response = gatewayRestClient.post()
+                .uri("/v1/article-likes/articles/" + articleId)
+                .header("Authorization", "Bearer " + token)
+                .header("X-User-Id", String.valueOf(memberId))
+                .contentType(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toBodilessEntity();
+
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+        log.info("좋아요 성공 - status: {}", response.getStatusCode());
     }
 }
