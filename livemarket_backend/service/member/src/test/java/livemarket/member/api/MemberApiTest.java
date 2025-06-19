@@ -36,7 +36,7 @@ public class MemberApiTest {
     @Test
     void loginTest() {
         LoginResponse response = login(new LoginRequest(
-                "test3@gmail.com",
+                "test@gmail.com",
                 "password123"
         ));
 

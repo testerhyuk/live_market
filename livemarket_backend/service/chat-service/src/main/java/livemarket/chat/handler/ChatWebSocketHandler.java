@@ -3,6 +3,7 @@ package livemarket.chat.handler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import livemarket.chat.dto.ChatMessageDto;
+import livemarket.chat.dto.NotificationDto;
 import livemarket.chat.entity.ChatMessage;
 import livemarket.chat.publisher.RedisPublisher;
 import livemarket.chat.repository.ChatMessageRepository;
@@ -28,6 +29,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
     private final RedisPublisher redisPublisher;
     private final ChatMessageRepository chatMessageRepository;
+    private final NotificationWebSocketHandler notificationWebSocketHandler;
     private final Snowflake snowflake = new Snowflake();
 
     private final Map<String, Set<WebSocketSession>> sessions = new ConcurrentHashMap<>();
@@ -44,13 +46,26 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        log.info("handleTextMessage 호출됨: payload={}", message.getPayload());
+
         ChatMessageDto dto = objectMapper.readValue(message.getPayload(), ChatMessageDto.class);
+
 
         Long chatId = snowflake.nextId();
         String roomId = dto.getRoomId();
 
         ChatMessage chatMessage = ChatMessage.from(dto, chatId);
         chatMessageRepository.save(chatMessage);
+
+        NotificationDto notificationDto = new NotificationDto(
+                dto.getReceiverId(),
+                "새 채팅 메시지가 도착했습니다",
+                "CHAT"
+        );
+
+        log.info("알림 전송 시도: receiverId={}", dto.getReceiverId());
+        notificationWebSocketHandler.sendNotification(notificationDto);
+        log.info("알림 전송 완료");
 
         redisPublisher.publish("chatroom:" + roomId, dto);
     }
