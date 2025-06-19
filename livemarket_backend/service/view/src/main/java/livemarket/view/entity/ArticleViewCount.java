@@ -16,7 +16,7 @@ import lombok.ToString;
 public class ArticleViewCount {
     @Id
     private Long articleId;
-    private long viewCount;
+    private Long viewCount;
 
     public static ArticleViewCount init(Long articleId, Long viewCount) {
         ArticleViewCount articleViewCount = new ArticleViewCount();
