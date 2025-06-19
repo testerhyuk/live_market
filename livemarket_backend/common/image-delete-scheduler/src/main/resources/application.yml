@@ -1,0 +1,35 @@
+server:
+  port: 9009
+spring:
+  application:
+    name: livemarket-image-delete-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3307/article
+    username: ${MYSQL_ROOT_USERNAME}
+    password: ${MYSQL_ROOT_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  cloud:
+    aws:
+      s3:
+        bucket: onairmarket
+      credentials:
+        accessKey: ${AMAZON_S3_ACCESS_KEY}
+        secretKey: ${AMAZON_S3_SECRET_KEY}
+      region:
+        static: ap-northeast-2
+  task:
+    scheduling:
+      pool:
+        size: 10
+      shutdown:
+        await-termination: true
+        await-termination-period: 30s
+logging:
+  level:
+    root: INFO

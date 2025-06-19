@@ -1,4 +1,4 @@
-package livemarket.article.service.response;
+package livemarket.articleImages.service.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

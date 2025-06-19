@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,18 +26,15 @@ public class ArticleService {
     private final Snowflake snowflake = new Snowflake();
     private final ArticleRepository articleRepository;
     private final BoardArticleCountRepository boardArticleCountRepository;
-    private final S3Service s3Service;
     private final OutboxEventPublisher outboxEventPublisher;
 
     @Transactional
     public ArticleResponse create(ArticleCreateRequest request, String memberId) {
         Long writerId = Long.parseLong(memberId);
 
-        List<String> imageUrls = request.getImageUrls();
-
         Article article = articleRepository.save(
                 Article.create(snowflake.nextId(), request.getTitle(), request.getContent(),
-                        request.getBoardId(), writerId, imageUrls)
+                        request.getBoardId(), writerId)
         );
 
         BoardArticleCount boardArticleCount = boardArticleCountRepository.findLockedByBoardId(request.getBoardId())
@@ -58,7 +54,6 @@ public class ArticleService {
                         .createdAt(article.getCreatedAt())
                         .modifiedAt(article.getModifiedAt())
                         .boardArticleCount(count(article.getBoardId()))
-                        .imageUrls(article.getImageUrls())
                         .build(),
                 article.getBoardId()
         );
@@ -70,13 +65,7 @@ public class ArticleService {
     public ArticleResponse update(Long articleId, ArticleUpdateRequest request) {
         Article article = articleRepository.findById(articleId).orElseThrow();
 
-        List<String> updatedImages = new ArrayList<>(article.getImageUrls());
-        updatedImages.removeAll(request.getDeletedImageUrls());
-        updatedImages.addAll(request.getNewImageUrls());
-
-        article.update(request.getTitle(), request.getContent(), updatedImages);
-
-        request.getDeletedImageUrls().forEach(s3Service::deleteImage);
+        article.update(request.getTitle(), request.getContent());
 
         outboxEventPublisher.publish(
                 EventType.ARTICLE_UPDATED,
@@ -88,7 +77,6 @@ public class ArticleService {
                         .writerId(article.getWriterId())
                         .createdAt(article.getCreatedAt())
                         .modifiedAt(article.getModifiedAt())
-                        .imageUrls(article.getImageUrls())
                         .build(),
                 article.getBoardId()
         );
@@ -99,8 +87,6 @@ public class ArticleService {
     @Transactional
     public void delete(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow();
-
-        article.getImageUrls().forEach(s3Service::deleteImage);
 
         articleRepository.delete(article);
 
@@ -121,7 +107,6 @@ public class ArticleService {
                         .createdAt(article.getCreatedAt())
                         .modifiedAt(article.getModifiedAt())
                         .boardArticleCount(count(article.getBoardId()))
-                        .imageUrls(article.getImageUrls())
                         .build(),
                 article.getBoardId()
         );

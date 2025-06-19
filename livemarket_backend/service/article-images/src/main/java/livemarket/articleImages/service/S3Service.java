@@ -1,6 +1,6 @@
-package livemarket.article.service;
+package livemarket.articleImages.service;
 
-import livemarket.article.service.response.PreSignedUrlResponse;
+import livemarket.articleImages.service.response.PreSignedUrlResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,9 @@
 package livemarket.article.controller;
 
-import livemarket.article.service.S3Service;
 import livemarket.article.service.request.ArticleCreateRequest;
 import livemarket.article.service.request.ArticleUpdateRequest;
 import livemarket.article.service.response.ArticlePageResponse;
 import livemarket.article.service.response.ArticleResponse;
-import livemarket.article.service.response.PreSignedUrlListResponse;
 import livemarket.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
-    private final S3Service s3Service;
 
     @GetMapping("/v1/articles/{articleId}")
     public ArticleResponse read(@PathVariable("articleId") Long articleId) {
@@ -60,10 +57,5 @@ public class ArticleController {
     @GetMapping("/v1/articles/boards/{boardId}/count")
     public Long count(@PathVariable("boardId") Long boardId) {
         return articleService.count(boardId);
-    }
-
-    @PostMapping("/presigned-urls")
-    public PreSignedUrlListResponse getPreSignedUrls(@RequestBody List<String> fileNames) {
-        return new PreSignedUrlListResponse(s3Service.createPreSignedUrls(fileNames));
     }
 }
