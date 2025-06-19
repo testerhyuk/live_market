@@ -17,8 +17,8 @@ public class MemberApiTest {
     @Test
     void signUpTest() {
         SignUpResponse response = signUp(new SignUpRequest(
-                "test2@gmail.com", "password123", "password123",
-                "서울시 강남구", "123-456", "테스트2"
+                "test3@gmail.com", "password123", "password123",
+                "서울시 강남구", "123-456", "테스트3"
         ));
 
         log.info("response = " + response);
@@ -36,7 +36,7 @@ public class MemberApiTest {
     @Test
     void loginTest() {
         LoginResponse response = login(new LoginRequest(
-                "test@gmail.com",
+                "test3@gmail.com",
                 "password123"
         ));
 

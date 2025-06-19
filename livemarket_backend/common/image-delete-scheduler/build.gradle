@@ -7,5 +7,6 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 
+
     implementation project(':service:article-images')
 }
