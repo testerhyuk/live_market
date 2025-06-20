@@ -22,6 +22,16 @@ spring:
           uri: http://localhost:9002/
           predicates:
             - Path=/v1/article-likes/**
+
+        - id: videocall-service
+          uri: http://locahost:9021
+          predicates:
+            - Path=/v1/video-calls/**
+
+        - id: videocall-ws
+          uri: ws://localhost:9021
+          predicates:
+            - Path=/ws/**
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG

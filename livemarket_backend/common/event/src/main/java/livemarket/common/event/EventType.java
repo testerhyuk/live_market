@@ -16,7 +16,8 @@ public enum EventType {
     COMMENT_DELETED(CommentDeletedEventPayload.class, Topic.LIVEMARKET_COMMENT),
     ARTICLE_LIKED(ArticleLikedEventPayload.class, Topic.LIVEMARKET_LIKE),
     ARTICLE_UNLIKED(ArticleUnlikedEventPayload.class, Topic.LIVEMARKET_LIKE),
-    ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.LIVEMARKET_VIEW)
+    ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.LIVEMARKET_VIEW),
+    VIDEO_CALL_SESSION_CREATED(VideoCallSessionCreatedPayload.class, Topic.LIVEMARKET_VIDEOCALL);
     ;
 
     private final Class<? extends EventPayload> payloadClass;
@@ -37,5 +38,6 @@ public enum EventType {
         public static final String LIVEMARKET_COMMENT = "livemarket-comment";
         public static final String LIVEMARKET_LIKE = "livemarket-like";
         public static final String LIVEMARKET_VIEW = "livemarket-view";
+        public static final String LIVEMARKET_VIDEOCALL = "livermarket-videocall";
     }
 }

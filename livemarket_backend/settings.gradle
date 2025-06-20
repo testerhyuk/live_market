@@ -10,6 +10,7 @@ include 'service:view'
 include 'service:member'
 include 'service:article-images'
 include 'service:chat-service'
+include 'service:video-call'
 
 include 'common'
 include 'common:snowflake'
