@@ -28,6 +28,6 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-  openvidu:
-    url: https://localhost:4443
-    secret: ${OPENVIDU_SECRET}
+openvidu:
+  url: http://localhost:4443
+  secret: ${OPENVIDU_SECRET}

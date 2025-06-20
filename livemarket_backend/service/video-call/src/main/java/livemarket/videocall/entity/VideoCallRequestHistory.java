@@ -18,7 +18,7 @@ public class VideoCallRequestHistory {
     private String fromMemberId;
     private String toMemberId;
     private String message;
-    private LocalDateTime requestedAt;
+    private LocalDateTime createdAt;
 
     public static VideoCallRequestHistory create(Long videoCallHistoryId, String roomId, String fromMemberId, String toMemberId, String message) {
         VideoCallRequestHistory history = new VideoCallRequestHistory();
@@ -28,7 +28,7 @@ public class VideoCallRequestHistory {
         history.fromMemberId = fromMemberId;
         history.toMemberId = toMemberId;
         history.message = message;
-        history.requestedAt = LocalDateTime.now();
+        history.createdAt = LocalDateTime.now();
 
         return history;
     }

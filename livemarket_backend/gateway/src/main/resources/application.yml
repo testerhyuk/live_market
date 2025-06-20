@@ -24,7 +24,7 @@ spring:
             - Path=/v1/article-likes/**
 
         - id: videocall-service
-          uri: http://locahost:9021
+          uri: http://localhost:9021
           predicates:
             - Path=/v1/video-calls/**
 

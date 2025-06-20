@@ -1,6 +1,7 @@
 package livemarket.videocall.event;
 
 import livemarket.common.event.Event;
+import livemarket.common.event.EventPayload;
 import livemarket.common.event.EventType;
 import livemarket.common.event.payload.VideoCallSessionCreatedPayload;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +20,19 @@ public class VideoCallSessionCreatedEventListener {
 
     @KafkaListener(topics = EventType.Topic.LIVEMARKET_VIDEOCALL)
     public void handle(String message) {
-
-        Event<VideoCallSessionCreatedPayload> event = (Event<VideoCallSessionCreatedPayload>) Event.fromJson(message);
+        log.info("[KafkaListener] Received message: {}", message);
+        Event<EventPayload> event = Event.fromJson(message);
 
         if (event == null) {
             log.error("[VideoCallSessionCreatedEventListener] Invalid message: {}", message);
             return;
         }
 
-        VideoCallSessionCreatedPayload payload = event.getPayload();
+        if (!(event.getPayload() instanceof VideoCallSessionCreatedPayload payload)) {
+            log.error("[VideoCallSessionCreatedEventListener] Unexpected payload type: {}",
+                    event.getPayload().getClass());
+            return;
+        }
 
         log.info("[VideoCallSessionCreatedEventListener] Sending notify to receiverId={}, sessionId={}",
                 payload.getReceiverId(), payload.getSessionId());

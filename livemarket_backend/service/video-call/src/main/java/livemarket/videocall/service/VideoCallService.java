@@ -20,10 +20,12 @@ import livemarket.videocall.service.dto.request.VideoCallKafkaRequestDto;
 import livemarket.videocall.service.dto.response.VideoCallKafkaResponseDto;
 import livemarket.videocall.service.dto.response.VideoCallSessionCreatedDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class VideoCallService {
     private final VideoCallRepository videoCallRepository;
     private final VideoCallKafkaProducer kafkaProducer;
@@ -49,7 +51,7 @@ public class VideoCallService {
                 dto.getFromMemberId(),
                 dto.getToMemberId(),
                 dto.getMessage(),
-                history.getRequestedAt()
+                history.getCreatedAt()
         );
 
         notificationSender.sendNotification(notificationDto);
