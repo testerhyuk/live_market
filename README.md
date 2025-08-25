@@ -25,6 +25,50 @@
 
 ---
 
+## 🔎 기술 소개
+
+#### 메인페이지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;카테고리
+
+<img title="" src="livemarket_frontend/src/assets/메인페이지.png" alt="[output image]" width="221">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img title="" src="livemarket_frontend/src/assets/카테고리.gif" alt="videotogif output image" width="220">  
+
+> 메인페이지에서는 새로 등록된 상품, 오늘의 인기 게시글을 확인할 수 있습니다.
+
+#### 회원가입 & 로그인&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;회원정보 수정
+
+<img title="" src="livemarket_frontend/src/assets/회원가입.gif" alt="[video-to-gif output image]" width="221">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img title="" src="livemarket_frontend/src/assets/마이페이지.gif" alt="videotogif output image" width="220">  
+
+> 사용자는 유효성 검증을 통해 회원가입을 진행하고 로그인 할 수 있습니다.
+>
+> 마이페이지에서 회원 정보를 수정할 수 있고, 본인이 작성한 게시글, 좋아요한 게시글, 댓글을 볼 수 있습니다.
+
+#### 검색&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;좋아요 & 댓글
+
+<img title="" src="livemarket_frontend/src/assets/검색.gif" alt="[video-to-gif output image]" width="221">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img title="" src="livemarket_frontend/src/assets/좋아요댓글.gif" alt="videotogif output image" width="221">
+<br/>
+
+> 검색시 제목과 본문에 일치하는 내용이 노출됩니다.
+>
+> 댓글은 2 depth까지만 작성이 지원되고, 하위 댓글이 지워지지 않은 채로 상위 댓글이 지워지면, 상위 댓글은 "삭제 처리되었습니다" 메시지만 노출됩니다.
+>
+> 하트 버튼을 눌러 원하는 게시글을 찜할 수 있습니다
+
+#### 게시글 작성&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;채팅
+
+<img title="" src="livemarket_frontend/src/assets/게시글작성.gif" alt="[video-to-gif output image]" width="228">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img title="" src="livemarket_frontend/src/assets/채팅.gif" alt="videotogif output image" width="400" height="500">
+<br/>
+
+> 누구나 판매할 게시글을 작성할 수 있으며 이미지는 amazon s3을 이용해 저장됩니다.
+> 
+> 원하는 사용자에게 1대1 채팅을 할 수 있으며, 채팅 수신시 알림이 발송됩니다.
+
+#### 화상채팅
+
+<img title="" src="livemarket_frontend/src/assets/화상채팅.gif" alt="[video-to-gioutput image]" width="450">
+
+> 판매자에게 화상채팅을 요청할 수 있으며, 수락시 화상채팅 방으로 이동됩니다.
+> 
+>  화상채팅과 일반적인 채팅 모두 가능합니다.
+
 ## 🧠 핵심 기술 요약
 
 ### 🧾 ID 생성 전략
