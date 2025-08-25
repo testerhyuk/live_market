@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class SignUpResponse {
-    private Long memberId;
+    private String memberId;
     private String email;
     private String nickname;
     private String address;
@@ -16,7 +16,7 @@ public class SignUpResponse {
     public static SignUpResponse from(Member member) {
         SignUpResponse response = new SignUpResponse();
 
-        response.memberId = member.getMemberId();
+        response.memberId = String.valueOf(member.getMemberId());
         response.email = member.getEmail();
         response.nickname = member.getNickname();
         response.address = member.getAddress();

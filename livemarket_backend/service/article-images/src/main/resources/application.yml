@@ -1,10 +1,10 @@
 server.port: 9007
 spring:
   application:
-    name: livemarket-article-service
+    name: livemarket-article-image-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3307/article
+    url: jdbc:mysql://127.0.0.1:3307/article_image
     username: ${MYSQL_ROOT_USERNAME}
     password: ${MYSQL_ROOT_PASSWORD}
   jpa:
@@ -16,9 +16,11 @@ spring:
   cloud:
     aws:
       s3:
-        bucket: onairmarket
+        path-style-access-enabled: true
       credentials:
-        accessKey: ${AMAZON_S3_ACCESS_KEY}
-        secretKey: ${AMAZON_S3_SECRET_KEY}
+        access-key: ${AMAZON_S3_ACCESS_KEY}
+        secret-key: ${AMAZON_S3_SECRET_KEY}
       region:
         static: ap-northeast-2
+bucket:
+  name: onairmarket

@@ -1,18 +1,41 @@
 package livemarket.videocall.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.ToString;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@ToString
 public class VideoCallNotificationDto {
-    private String roomId;
-    private String fromMemberId;
-    private String toMemberId;
-    private String message;
-    private LocalDateTime requestedAt;
+    private final String sessionId;
+    private final String fromMemberId;
+    private final String toMemberId;
+    private final String token;
+    private final Long createdAt;
+    private final String message;
+
+    @JsonCreator
+    public static VideoCallNotificationDto create(
+            @JsonProperty("sessionId") String sessionId,
+            @JsonProperty("fromMemberId") String fromMemberId,
+            @JsonProperty("toMemberId") String toMemberId,
+            @JsonProperty("token") String token,
+            @JsonProperty("createdAt") Long createdAt,
+            @JsonProperty("message") String message
+    ) {
+        return new VideoCallNotificationDto(sessionId, fromMemberId, toMemberId, token, createdAt, message);
+    }
+
+    private VideoCallNotificationDto(String sessionId, String fromMemberId, String toMemberId,
+                                     String token, Long createdAt, String message) {
+        this.sessionId = sessionId;
+        this.fromMemberId = fromMemberId;
+        this.toMemberId = toMemberId;
+        this.token = token;
+        this.createdAt = createdAt;
+        this.message = message;
+    }
 }

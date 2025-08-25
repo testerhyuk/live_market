@@ -7,6 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class NotificationDto {
     private String receiverId;
+    private String senderId;
+    private String roomId;
     private String content;
     private String type;
 }

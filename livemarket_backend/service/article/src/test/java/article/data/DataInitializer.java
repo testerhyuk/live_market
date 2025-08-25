@@ -3,6 +3,7 @@ package article.data;
 import livemarket.article.entity.Article;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import livemarket.article.entity.Category;
 import livemarket.common.snowflake.Snowflake;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +53,10 @@ public class DataInitializer {
                         snowflake.nextId(),
                         "title" + i,
                         "content",
+                        2000,
                         1L,
                         1L,
-                        List.of("imageUrl")
+                        Category.ELECTRONICS
                 );
                 entityManager.persist(article);
             }

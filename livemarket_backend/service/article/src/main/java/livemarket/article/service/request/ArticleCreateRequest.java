@@ -8,6 +8,8 @@ import lombok.ToString;
 public class ArticleCreateRequest {
     private String title;
     private String content;
-    private Long writerId;
+    private int price;
+    private String writerId;
     private Long boardId;
+    private String category;
 }

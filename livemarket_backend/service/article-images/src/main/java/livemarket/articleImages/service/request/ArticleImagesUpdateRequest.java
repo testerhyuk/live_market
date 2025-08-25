@@ -8,8 +8,8 @@ import java.util.List;
 @Getter
 @ToString
 public class ArticleImagesUpdateRequest {
-    private Long articleId;
-    private Long userId;
+    private String articleId;
+    private String userId;
     private List<String> newImageUrls;
     private List<String> remainingImageIds;
 }

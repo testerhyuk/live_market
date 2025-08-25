@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
@@ -25,7 +26,7 @@ class CommentServiceTest {
 
     @Test
     @DisplayName("삭제할 댓글이 자식 있으면, 삭제 표시만 한다.")
-    void deleteShouldMarkDeletedIfHasChildren() {
+    void deleteShouldMarkDeletedIfHasChildren() throws AccessDeniedException {
         // given
         Long articleId = 1L;
         Long commentId = 2L;
@@ -35,7 +36,7 @@ class CommentServiceTest {
         given(commentRepository.countBy(articleId, commentId, 2L)).willReturn(2L);
 
         // when
-        commentService.delete(commentId);
+        commentService.delete(commentId, 1L);
 
         // then
         verify(comment).delete();
@@ -43,7 +44,7 @@ class CommentServiceTest {
 
     @Test
     @DisplayName("하위 댓글이 삭제되고, 삭제되지 않은 부모면, 하위 댓글만 삭제한다.")
-    void deleteShouldDeleteChildOnlyIfNotDeletedParent() {
+    void deleteShouldDeleteChildOnlyIfNotDeletedParent() throws AccessDeniedException {
         // given
         Long articleId = 1L;
         Long commentId = 2L;
@@ -63,7 +64,7 @@ class CommentServiceTest {
                 .willReturn(Optional.of(parentComment));
 
         // when
-        commentService.delete(commentId);
+        commentService.delete(commentId, 1L);
 
         // then
         verify(commentRepository).delete(comment);
@@ -72,7 +73,7 @@ class CommentServiceTest {
 
     @Test
     @DisplayName("하위 댓글이 삭제되고, 삭제된 부모면, 재귀적으로 모두 삭제한다.")
-    void deleteShouldDeleteAllRecursivelyIfDeletedParent() {
+    void deleteShouldDeleteAllRecursivelyIfDeletedParent() throws AccessDeniedException {
         // given
         Long articleId = 1L;
         Long commentId = 2L;
@@ -94,7 +95,7 @@ class CommentServiceTest {
         given(commentRepository.countBy(articleId, parentCommentId, 2L)).willReturn(1L);
 
         // when
-        commentService.delete(commentId);
+        commentService.delete(commentId, 1L);
 
         // then
         verify(commentRepository).delete(comment);

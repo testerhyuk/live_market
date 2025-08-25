@@ -7,7 +7,7 @@ spring:
       host: 127.0.0.1
       port: 6432
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 127.0.0.1:9092
     consumer:
       group-id: livemarket-hot-article-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

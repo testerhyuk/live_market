@@ -2,15 +2,14 @@ package livemarket.videocall.controller;
 
 import livemarket.videocall.kafka.VideoCallKafkaProducer;
 import livemarket.videocall.service.VideoCallService;
+import livemarket.videocall.service.dto.OpenViduSessionResult;
 import livemarket.videocall.service.dto.VideoCallCreateDto;
 import livemarket.videocall.service.dto.VideoCallSessionCreateDto;
 import livemarket.videocall.service.dto.request.VideoCallKafkaRequestDto;
 import livemarket.videocall.service.dto.response.VideoCallKafkaResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,9 +32,15 @@ public class VideoCallController {
     }
 
     @PostMapping("/v1/video-calls/sessions")
-    public ResponseEntity<?> createSession(@RequestBody VideoCallCreateDto dto) {
-        videoCallService.createSessionAndPublish(dto);
+    public ResponseEntity<OpenViduSessionResult> createSession(@RequestBody VideoCallCreateDto dto) {
+        OpenViduSessionResult sessionResult = videoCallService.createSessionAndPublish(dto);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(sessionResult);
+    }
+
+    @PostMapping("/v1/video-calls/sessions/join")
+    public ResponseEntity<OpenViduSessionResult> joinSession(@RequestBody VideoCallSessionCreateDto dto) {
+        OpenViduSessionResult result = videoCallService.joinSession(dto);
+        return ResponseEntity.ok(result);
     }
 }

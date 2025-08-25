@@ -3,6 +3,7 @@ package livemarket.articleImages.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "article_image")
 public class ArticleImages {
     @Id
     private Long articleImagesId;
@@ -35,6 +37,7 @@ public class ArticleImages {
         articleImages.articleImageUrl = articleImageUrl;
         articleImages.createdAt = LocalDateTime.now();
         articleImages.updatedAt = articleImages.createdAt;
+        articleImages.deleted = false;
 
         return articleImages;
     }

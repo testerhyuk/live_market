@@ -5,6 +5,7 @@ import livemarket.comment.entity.Comment;
 import livemarket.comment.repository.ArticleCommentCountRepository;
 import livemarket.comment.repository.CommentRepository;
 import livemarket.comment.service.request.CommentCreateRequest;
+import livemarket.comment.service.request.CommentUpdateRequest;
 import livemarket.comment.service.response.CommentPageResponse;
 import livemarket.comment.service.response.CommentResponse;
 import livemarket.common.event.EventType;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import static java.util.function.Predicate.not;
@@ -39,15 +41,15 @@ public class CommentService {
                         snowflake.nextId(),
                         request.getContent(),
                         parent == null ? null : parent.getCommentId(),
-                        request.getArticleId(),
+                        Long.valueOf(request.getArticleId()),
                         writerId
                 )
         );
 
-        int result = articleCommentCountRepository.increase(request.getArticleId());
+        int result = articleCommentCountRepository.increase(Long.valueOf(request.getArticleId()));
         if (result == 0) {
             articleCommentCountRepository.save(
-                    ArticleCommentCount.init(request.getArticleId(), 1L)
+                    ArticleCommentCount.init(Long.valueOf(request.getArticleId()), 1L)
             );
         }
 
@@ -69,11 +71,12 @@ public class CommentService {
     }
 
     private Comment findParent(CommentCreateRequest request) {
-        Long parentCommentId = request.getParentCommentId();
 
-        if (parentCommentId == null) {
+        if (request.getParentCommentId() == null) {
             return null;
         }
+
+        Long parentCommentId = Long.valueOf(request.getParentCommentId());
 
         return commentRepository.findById(parentCommentId)
                 .filter(not(Comment::getDeleted))
@@ -86,29 +89,31 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(Long commentId) {
-        commentRepository.findById(commentId)
-                .filter(not(Comment::getDeleted))
-                .ifPresent(comment -> {
-                    if (hasChildren(comment)) {
-                        comment.delete();
-                    } else {
-                        delete(comment);
-                    }
-                    outboxEventPublisher.publish(
-                            EventType.COMMENT_DELETED,
-                            CommentDeletedEventPayload.builder()
-                                    .commentId(comment.getCommentId())
-                                    .content(comment.getContent())
-                                    .articleId(comment.getArticleId())
-                                    .writerId(comment.getWriterId())
-                                    .deleted(comment.getDeleted())
-                                    .createdAt(comment.getCreatedAt())
-                                    .articleCommentCount(count(comment.getArticleId()))
-                                    .build(),
-                            comment.getArticleId()
-                    );
-                });
+    public void delete(Long commentId, Long userId) throws AccessDeniedException {
+        Comment comment = commentRepository.findById(commentId)
+                .filter(c -> !c.getDeleted())
+                .filter(c -> c.getWriterId().equals(userId))
+                .orElseThrow(() -> new AccessDeniedException("삭제할 권한이 없거나 이미 삭제된 댓글입니다."));
+
+        if (hasChildren(comment)) {
+            comment.delete();
+        } else {
+            delete(comment);
+        }
+
+        outboxEventPublisher.publish(
+                EventType.COMMENT_DELETED,
+                CommentDeletedEventPayload.builder()
+                        .commentId(comment.getCommentId())
+                        .content(comment.getContent())
+                        .articleId(comment.getArticleId())
+                        .writerId(comment.getWriterId())
+                        .deleted(comment.getDeleted())
+                        .createdAt(comment.getCreatedAt())
+                        .articleCommentCount(count(comment.getArticleId()))
+                        .build(),
+                comment.getArticleId()
+        );
     }
 
     private boolean hasChildren(Comment comment) {
@@ -151,5 +156,22 @@ public class CommentService {
         return articleCommentCountRepository.findById(boardId)
                 .map(ArticleCommentCount::getCommentCount)
                 .orElse(0L);
+    }
+
+    @Transactional
+    public CommentResponse update(Long commentId, CommentUpdateRequest request, Long userId) throws AccessDeniedException {
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+
+        if (!comment.getWriterId().equals(userId)) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        comment.update(request.getComment());
+
+        return CommentResponse.from(comment);
+    }
+
+    public List<CommentResponse> getCommentByUserId(Long userId) {
+        return commentRepository.findAllByWriterId(userId).stream().map(CommentResponse::from).toList();
     }
 }

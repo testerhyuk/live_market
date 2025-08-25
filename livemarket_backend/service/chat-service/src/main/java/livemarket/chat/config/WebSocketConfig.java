@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .addInterceptors(interceptor)
                 .setAllowedOrigins("*");
 
-        registry.addHandler(notificationWebSocketHandler, "/ws/notification")
+        registry.addHandler(notificationWebSocketHandler, "/notify")
                 .addInterceptors(authHandshakeInterceptor)
                 .setAllowedOrigins("*");
     }

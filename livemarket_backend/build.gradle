@@ -40,6 +40,8 @@ allprojects {
 		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 		implementation 'ch.qos.logback:logback-classic'
+
+		implementation 'org.springframework.boot:spring-boot-starter'
 	}
 
 	tasks.named('test') {

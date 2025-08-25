@@ -39,6 +39,11 @@ public class Comment {
         return comment;
     }
 
+    public void update(String content) {
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public boolean isRoot() {
         return parentCommentId.longValue() == commentId;
     }

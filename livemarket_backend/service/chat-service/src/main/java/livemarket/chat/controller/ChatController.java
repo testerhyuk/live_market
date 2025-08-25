@@ -14,7 +14,7 @@ import java.util.List;
 public class ChatController {
     private final ChatMessageRepository chatMessageRepository;
 
-    @GetMapping("/rooms/{roomId}/messages")
+    @GetMapping("/v1/chat/rooms/{roomId}/messages")
     public List<ChatMessage> getMessages(@PathVariable("roomId") String roomId) {
         return chatMessageRepository.findByRoomIdOrderBySentAtAsc(roomId);
     }

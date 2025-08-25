@@ -12,24 +12,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Log4j2
 public class VideoCallNotificationSender {
-    private final SimpMessagingTemplate messagingTemplate;
-    private final StringRedisTemplate redisTemplate;
+    private final VideoCallKafkaProducer kafkaProducer;
     private final ObjectMapper objectMapper;
 
     public void sendNotification(VideoCallNotificationDto dto) {
         log.info("알림 전송 : {} -> {}", dto.getFromMemberId(), dto.getToMemberId());
 
-        messagingTemplate.convertAndSend(
-                "/topic/video-call/" + dto.getToMemberId(),
-                dto
-        );
-
-        try {
-            String channel = "video-call-notify";
-            String message = objectMapper.writeValueAsString(dto);  // DTO -> JSON 문자열 변환
-            redisTemplate.convertAndSend(channel, message);
-        } catch (Exception e) {
-            log.error("Redis 메시지 발행 실패", e);
-        }
+        kafkaProducer.sendNotification(dto);
     }
 }

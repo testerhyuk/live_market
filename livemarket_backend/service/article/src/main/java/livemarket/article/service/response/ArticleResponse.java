@@ -9,11 +9,13 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 public class ArticleResponse {
-    private Long articleId;
+    private String articleId;
     private String title;
     private String content;
     private Long boardId;
-    private Long writerId;
+    private String writerId;
+    private String category;
+    private int price;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -21,13 +23,15 @@ public class ArticleResponse {
     public static ArticleResponse from(Article article) {
         ArticleResponse response = new ArticleResponse();
 
-        response.articleId = article.getArticleId();
+        response.articleId = String.valueOf(article.getArticleId());
         response.title = article.getTitle();
         response.content = article.getContent();
         response.boardId = article.getBoardId();
-        response.writerId = article.getWriterId();
+        response.writerId = String.valueOf(article.getWriterId());
         response.createdAt = article.getCreatedAt();
         response.modifiedAt = article.getModifiedAt();
+        response.category = String.valueOf(article.getCategory());
+        response.price = article.getPrice();
 
         return response;
     }

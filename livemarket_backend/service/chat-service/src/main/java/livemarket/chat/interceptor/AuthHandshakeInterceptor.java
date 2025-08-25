@@ -2,6 +2,7 @@ package livemarket.chat.interceptor;
 
 import livemarket.chat.config.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
         }
 
         if (token == null || !jwtProvider.validateToken(token)) {
+            response.setStatusCode(HttpStatus.FORBIDDEN);
             return false;
         }
 

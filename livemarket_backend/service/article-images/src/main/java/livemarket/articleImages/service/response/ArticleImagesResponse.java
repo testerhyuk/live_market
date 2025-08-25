@@ -7,17 +7,17 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ArticleImagesResponse {
-    private Long articleImageId;
-    private Long articleId;
-    private Long userId;
+    private String articleImageId;
+    private String articleId;
+    private String userId;
     private String articleImageUrl;
 
     public static ArticleImagesResponse from(ArticleImages articleImages) {
         ArticleImagesResponse response = new ArticleImagesResponse();
 
-        response.articleImageId = articleImages.getArticleImagesId();
-        response.articleId = articleImages.getArticleId();
-        response.userId = articleImages.getUserId();
+        response.articleImageId = String.valueOf(articleImages.getArticleImagesId());
+        response.articleId = String.valueOf(articleImages.getArticleId());
+        response.userId = String.valueOf(articleImages.getUserId());
         response.articleImageUrl = articleImages.getArticleImageUrl();
 
         return response;

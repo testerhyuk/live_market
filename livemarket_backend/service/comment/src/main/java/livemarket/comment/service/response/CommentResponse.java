@@ -9,21 +9,21 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 public class CommentResponse {
-    private Long commentId;
+    private String commentId;
     private String content;
-    private Long parentCommentId;
-    private Long articleId;
-    private Long writerId;
+    private String parentCommentId;
+    private String articleId;
+    private String writerId;
     private Boolean deleted;
     private LocalDateTime createdAt;
 
     public static CommentResponse from(Comment comment) {
         CommentResponse response = new CommentResponse();
-        response.commentId = comment.getCommentId();
+        response.commentId = String.valueOf(comment.getCommentId());
         response.content = comment.getContent();
-        response.parentCommentId = comment.getParentCommentId();
-        response.articleId = comment.getArticleId();
-        response.writerId = comment.getWriterId();
+        response.parentCommentId = String.valueOf(comment.getParentCommentId());
+        response.articleId = String.valueOf(comment.getArticleId());
+        response.writerId = String.valueOf(comment.getWriterId());
         response.deleted = comment.getDeleted();
         response.createdAt = comment.getCreatedAt();
         return response;

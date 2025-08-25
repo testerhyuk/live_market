@@ -7,16 +7,18 @@ import lombok.ToString;
 @Getter
 @ToString
 public class LoginResponse {
-    private Long memberId;
+    private String memberId;
     private String email;
+    private String nickname;
     private String token;
     private String tokenType;
 
     public static LoginResponse from(Member member, String token) {
         LoginResponse response = new LoginResponse();
 
-        response.memberId = member.getMemberId();
+        response.memberId = String.valueOf(member.getMemberId());
         response.email = member.getEmail();
+        response.nickname = member.getNickname();
         response.token = token;
         response.tokenType = "Bearer";
 

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,8 +27,8 @@ public class ArticleImagesService {
                 .map(url -> {
                     ArticleImages articleImage = ArticleImages.upload(
                             snowflake.nextId(),
-                            request.getArticleId(),
-                            request.getUserId(),
+                            Long.parseLong(request.getArticleId()),
+                            Long.parseLong(request.getUserId()),
                             url
                     );
                     articleImagesRepository.save(articleImage);
@@ -38,8 +40,8 @@ public class ArticleImagesService {
 
     @Transactional
     public List<ArticleImagesResponse> updateImages(ArticleImagesUpdateRequest request) {
-        Long articleId = request.getArticleId();
-        Long userId = request.getUserId();
+        Long articleId = Long.valueOf(request.getArticleId());
+        Long userId = Long.valueOf(request.getUserId());
 
         List<ArticleImages> currentImages = articleImagesRepository.findByArticleId(articleId);
 
@@ -73,7 +75,6 @@ public class ArticleImagesService {
 
         // 기존 이미지 + 새로 추가된 이미지 반환
         List<ArticleImagesResponse> remainingResponses = currentImages.stream()
-                .filter(img -> !img.isDeleted())
                 .filter(img -> remaining.contains(img.getArticleImageUrl()))
                 .map(ArticleImagesResponse::from)
                 .collect(Collectors.toList());
@@ -81,5 +82,25 @@ public class ArticleImagesService {
         remainingResponses.addAll(newSaved);
 
         return remainingResponses;
+    }
+
+    public List<String> getImageUrlsByArticleId(Long articleId) {
+        return articleImagesRepository.findByArticleId(articleId).stream()
+                .map(ArticleImages::getArticleImageUrl)
+                .toList();
+    }
+
+    public void delete(Long articleId, Long userId) throws AccessDeniedException {
+        List<ArticleImages> images = articleImagesRepository.findByArticleId(articleId);
+        boolean isOwner = images.stream().allMatch(img -> img.getUserId().equals(userId));
+
+        if (!isOwner) {
+            throw new AccessDeniedException("삭제 권한이 없습니다.");
+        }
+
+        images.forEach(img -> {
+            img.softDelete();
+            articleImagesRepository.save(img);
+        });
     }
 }

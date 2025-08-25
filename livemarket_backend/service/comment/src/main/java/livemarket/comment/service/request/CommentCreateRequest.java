@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class CommentCreateRequest {
-    private Long articleId;
+    private String articleId;
     private String content;
-    private Long parentCommentId;
-    private Long writerId;
+    private String parentCommentId;
+    private String writerId;
 }

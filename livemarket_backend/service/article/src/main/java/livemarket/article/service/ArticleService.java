@@ -1,6 +1,7 @@
 package livemarket.article.service;
 
 import livemarket.article.entity.Article;
+import livemarket.article.entity.Category;
 import livemarket.article.repository.ArticleRepository;
 import livemarket.article.repository.BoardArticleCountRepository;
 import livemarket.article.service.request.ArticleCreateRequest;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -33,8 +35,8 @@ public class ArticleService {
         Long writerId = Long.parseLong(memberId);
 
         Article article = articleRepository.save(
-                Article.create(snowflake.nextId(), request.getTitle(), request.getContent(),
-                        request.getBoardId(), writerId)
+                Article.create(snowflake.nextId(), request.getTitle(), request.getContent(), request.getPrice(),
+                        request.getBoardId(), writerId, Category.valueOf(request.getCategory()))
         );
 
         BoardArticleCount boardArticleCount = boardArticleCountRepository.findLockedByBoardId(request.getBoardId())
@@ -65,7 +67,7 @@ public class ArticleService {
     public ArticleResponse update(Long articleId, ArticleUpdateRequest request) {
         Article article = articleRepository.findById(articleId).orElseThrow();
 
-        article.update(request.getTitle(), request.getContent());
+        article.update(request.getTitle(), request.getContent(), request.getPrice(), Category.valueOf(request.getCategory()));
 
         outboxEventPublisher.publish(
                 EventType.ARTICLE_UPDATED,
@@ -85,8 +87,12 @@ public class ArticleService {
     }
 
     @Transactional
-    public void delete(Long articleId) {
+    public void delete(Long articleId, Long userId) throws AccessDeniedException {
         Article article = articleRepository.findById(articleId).orElseThrow();
+
+        if (!article.getWriterId().equals(userId)) {
+            throw new AccessDeniedException("삭제 권한이 없습니다");
+        }
 
         articleRepository.delete(article);
 
@@ -147,5 +153,29 @@ public class ArticleService {
         return boardArticleCountRepository.findLockedByBoardId(boardId)
                 .map(BoardArticleCount::getArticleCount)
                 .orElse(0L);
+    }
+
+    public List<ArticleResponse> search(Long boardId, String keyword, Long limit, Long lastArticleId) {
+        String keywordForDB = "%" + keyword + "%";
+
+        List<Article> articles = lastArticleId == null ?
+                articleRepository.findAllByTitleAndContentContaining(boardId, keywordForDB, limit) :
+                articleRepository.findAllByTitleAndContentContaining(boardId, keywordForDB, limit, lastArticleId);
+
+        return articles.stream().map(ArticleResponse::from).toList();
+    }
+
+    public List<ArticleResponse> readAllByCategory(Long boardId, String category, Long limit, Long lastArticleId) {
+        List<Article> articles = lastArticleId == null ?
+                articleRepository.findAllByCategory(boardId, category, limit) :
+                articleRepository.findAllByCategory(boardId, category, limit, lastArticleId);
+
+        return articles.stream().map(ArticleResponse::from).toList();
+    }
+
+    public List<ArticleResponse> readAllByWriterId(String userId) {
+        Long memberId = Long.parseLong(userId);
+
+        return articleRepository.findAllByWriterId(memberId).stream().map(ArticleResponse::from).toList();
     }
 }

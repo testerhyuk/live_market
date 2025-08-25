@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class S3Service {
-    @Value("${spring.cloud.aws.s3.bucket}")
+    @Value("${bucket.name}")
     private String bucket;
 
     private final S3Presigner s3Presigner;
@@ -30,6 +30,8 @@ public class S3Service {
     }
 
     private String generatePreSignedUrl(String fileName) {
+        String uniqueFileName = appendRandomUuid(fileName);
+
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName)
@@ -52,5 +54,17 @@ public class S3Service {
                 .build();
 
         s3Client.deleteObject(deleteObjectRequest);
+    }
+
+    private String appendRandomUuid(String fileName) {
+        String uuid = java.util.UUID.randomUUID().toString();
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex != -1) {
+            String name = fileName.substring(0, dotIndex);
+            String ext = fileName.substring(dotIndex);
+            return name + "-" + uuid + ext;
+        } else {
+            return fileName + "-" + uuid;
+        }
     }
 }

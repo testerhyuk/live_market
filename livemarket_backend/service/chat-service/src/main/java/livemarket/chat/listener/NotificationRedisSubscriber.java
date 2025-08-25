@@ -21,7 +21,7 @@ public class NotificationRedisSubscriber implements MessageListener {
         try {
             String json = new String(message.getBody());
             NotificationDto dto = objectMapper.readValue(json, NotificationDto.class);
-            handler.sendNotification(dto);
+            handler.sendNotification(dto.getReceiverId(), dto);
         } catch (Exception e) {
             log.error("알림 수신 에러", e);
         }

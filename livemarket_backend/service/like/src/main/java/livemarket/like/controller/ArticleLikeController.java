@@ -5,6 +5,10 @@ import livemarket.like.service.response.ArticleLikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 public class ArticleLikeController {
@@ -28,5 +32,21 @@ public class ArticleLikeController {
     @GetMapping("/v1/article-likes/articles/{articleId}/count")
     public Long count(@PathVariable("articleId") Long articleId) {
         return articleLikeService.count(articleId);
+    }
+
+    @PostMapping("/v1/article-likes/articles/{articleId}/status")
+    public Map<String, Boolean> getLikeStatus(
+            @PathVariable("articleId") Long articleId,
+            @RequestHeader("X-User-Id") Long userId
+    ) {
+        boolean likeStatus = articleLikeService.isLiked(articleId, userId);
+
+        return Collections.singletonMap("likeStatus", likeStatus);
+    }
+
+    @GetMapping("/v1/article-likes/articles/member/{userId}")
+    public List<ArticleLikeResponse> getArticleLikeByUserId(@PathVariable("userId") String userId) {
+        Long memberId = Long.parseLong(userId);
+        return articleLikeService.getArticleLikeByUserId(memberId);
     }
 }

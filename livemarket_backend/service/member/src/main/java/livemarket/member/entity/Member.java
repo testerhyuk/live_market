@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "members")
+@Table(name = "member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
@@ -45,5 +45,13 @@ public class Member {
         member.updatedAt = LocalDateTime.now();
 
         return member;
+    }
+
+    public void update(String password, String nickname, String address, String detailAddress) {
+        if (password != null) this.password = password;
+        if (nickname != null) this.nickname = nickname;
+        if (address != null) this.address = address;
+        if (detailAddress != null) this.detailAddress = detailAddress;
+        this.updatedAt = LocalDateTime.now();
     }
 }

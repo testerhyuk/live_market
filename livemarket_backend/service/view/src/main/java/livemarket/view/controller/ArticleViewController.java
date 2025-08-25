@@ -1,10 +1,7 @@
 package livemarket.view.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import livemarket.view.service.ArticleViewService;
 
 @RestController
@@ -12,10 +9,10 @@ import livemarket.view.service.ArticleViewService;
 public class ArticleViewController {
     private final ArticleViewService articleViewService;
 
-    @PostMapping("/v1/article-views/articles/{articleId}/users/{userId}")
+    @PostMapping("/v1/article-views/articles/{articleId}")
     public Long increase(
             @PathVariable("articleId") Long articleId,
-            @PathVariable("userId") Long userId
+            @RequestHeader("X-User-Id") Long userId
     ) {
         return  articleViewService.increase(articleId, userId);
     }

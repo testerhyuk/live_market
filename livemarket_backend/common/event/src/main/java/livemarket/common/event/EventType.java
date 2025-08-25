@@ -38,6 +38,6 @@ public enum EventType {
         public static final String LIVEMARKET_COMMENT = "livemarket-comment";
         public static final String LIVEMARKET_LIKE = "livemarket-like";
         public static final String LIVEMARKET_VIEW = "livemarket-view";
-        public static final String LIVEMARKET_VIDEOCALL = "livermarket-videocall";
+        public static final String LIVEMARKET_VIDEOCALL = "livemarket-videocall";
     }
 }

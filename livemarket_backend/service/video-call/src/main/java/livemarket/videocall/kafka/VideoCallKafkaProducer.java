@@ -2,6 +2,7 @@ package livemarket.videocall.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import livemarket.videocall.service.dto.VideoCallNotificationDto;
 import livemarket.videocall.service.dto.request.VideoCallKafkaRequestDto;
 import livemarket.videocall.service.dto.response.VideoCallKafkaResponseDto;
 import livemarket.videocall.service.dto.response.VideoCallSessionCreatedDto;
@@ -25,6 +26,10 @@ public class VideoCallKafkaProducer {
 
     public void sendSessionCreated(VideoCallSessionCreatedDto dto) {
         send("video-call.session", dto);
+    }
+
+    public void sendNotification(VideoCallNotificationDto dto) {
+        send("video-call.notify", dto);
     }
 
     private void send(String topic, Object dto) {

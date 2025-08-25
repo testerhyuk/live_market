@@ -50,21 +50,33 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         ChatMessageDto dto = objectMapper.readValue(message.getPayload(), ChatMessageDto.class);
 
-
         Long chatId = snowflake.nextId();
         String roomId = dto.getRoomId();
 
         ChatMessage chatMessage = ChatMessage.from(dto, chatId);
+
         chatMessageRepository.save(chatMessage);
+
+        log.info("소스 : " + dto);
+
+        String content = "새 채팅 메시지가 도착했습니다";
+        String typ = "CHAT";
+
+        if ("VIDEO_CALL".equals(dto.getSource())) {
+            content = "화상 채팅 메시지가 도착했습니다";
+            typ = "VIDEO";
+        }
 
         NotificationDto notificationDto = new NotificationDto(
                 dto.getReceiverId(),
-                "새 채팅 메시지가 도착했습니다",
-                "CHAT"
+                dto.getSenderId(),
+                roomId,
+                content,
+                typ
         );
 
         log.info("알림 전송 시도: receiverId={}", dto.getReceiverId());
-        notificationWebSocketHandler.sendNotification(notificationDto);
+        notificationWebSocketHandler.sendNotification(dto.getReceiverId(), notificationDto);
         log.info("알림 전송 완료");
 
         redisPublisher.publish("chatroom:" + roomId, dto);

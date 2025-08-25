@@ -17,6 +17,7 @@ public class ChatMessage {
     private Long chatId;
     private String roomId;
     private String senderId;
+    private String senderNickname;
     private String receiverId;
     @Column(columnDefinition = "TEXT")
     private String message;
@@ -34,6 +35,7 @@ public class ChatMessage {
         chatMessage.chatId = chatId;
         chatMessage.roomId = dto.getRoomId();
         chatMessage.senderId = dto.getSenderId();
+        chatMessage.senderNickname = dto.getSenderNickname();
         chatMessage.receiverId = dto.getReceiverId();
         chatMessage.message = dto.getMessage();
         chatMessage.type = MessageType.valueOf(dto.getType().name());
