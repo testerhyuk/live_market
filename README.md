@@ -35,7 +35,7 @@
 
 #### 회원가입 & 로그인&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;회원정보 수정
 
-<img title="" src="livemarket_frontend/src/assets/회원가입.gif" alt="[video-to-gif output image]" width="221">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img title="" src="livemarket_frontend/src/assets/마이페이지.gif" alt="videotogif output image" width="220">  
+<img title="" src="livemarket_frontend/src/assets/회원가입로그인.gif" alt="[video-to-gif output image]" width="221">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img title="" src="livemarket_frontend/src/assets/마이페이지.gif" alt="videotogif output image" width="220">  
 
 > 사용자는 유효성 검증을 통해 회원가입을 진행하고 로그인 할 수 있습니다.
 >
